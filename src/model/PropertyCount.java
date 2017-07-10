@@ -2,6 +2,7 @@ package model;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class PropertyCount {
 
@@ -15,7 +16,9 @@ public class PropertyCount {
 	public PropertyCount(Map<String, Long> propertiesCount) {
 		setPropertiesCount(propertiesCount);
 	}
-
+	public Set<String> getKeySet() {
+		return propertiesCount.keySet();
+	}
 	public Map<String, Long> getPropertiesCount() {
 		return propertiesCount;
 	}

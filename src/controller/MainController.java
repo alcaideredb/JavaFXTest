@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -23,11 +24,15 @@ public class MainController {
 	@FXML private AnchorPane fillPane;
 	
 	@FXML protected void loadIntlProj(ActionEvent event) {
-		System.out.println(fillPane.getPadding());
-		try {
-			GridPane newLoadedPane =  FXMLLoader.load(getClass().getResource("/form/InternationalizedPropertyFileForm.fxml"));
-			fillPane.getChildren().clear();
+ 		try {
+			AnchorPane newLoadedPane =  FXMLLoader.load(getClass().getResource("/form/InternationalizedPropertyFileForm.fxml"));
+ 			fillPane.getChildren().clear();
+			fillPane.setLeftAnchor(newLoadedPane, 0.0);
+			fillPane.setRightAnchor(newLoadedPane, 0.0);
+			fillPane.setTopAnchor(newLoadedPane, 0.0);
+			fillPane.setBottomAnchor(newLoadedPane, 0.0);
 			fillPane.getChildren().add(newLoadedPane);
+			
  		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
