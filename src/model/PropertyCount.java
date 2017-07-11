@@ -1,8 +1,14 @@
 package model;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class PropertyCount {
 
@@ -47,6 +53,27 @@ public class PropertyCount {
 		return "PropertyCount [propertiesCount=" + propertiesCount + "]";
 	}
 	
+	public static PropertyCount getPropertiesCountFromFile(String... files) {
+		PropertyCount accumulator = new PropertyCount();
+		for (String file : files) {
+			PropertyCount propertyCount = getPropertiesCountFromFile(file);
+			accumulator.add(propertyCount);
+		}
+		return accumulator;
+	}
 	
-	
+ 	public static PropertyCount getPropertiesCountFromFile(String file) {
+		Path path = Paths.get(file);
+		try {
+			List<String> lines = Files.lines(path).filter(s -> !s.startsWith("#") && !s.isEmpty())
+					.collect(Collectors.toList());
+			Map<String, Long> propertyCountMap = lines.stream()
+					.collect(Collectors.groupingBy(s -> s.toString().split("=")[0], Collectors.counting()));
+			PropertyCount propertyCount = new PropertyCount(propertyCountMap);
+			return propertyCount;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return new PropertyCount();
+	}
 }

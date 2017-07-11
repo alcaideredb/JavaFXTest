@@ -2,13 +2,12 @@ package service.interfaces;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import model.PropertyCount;
 
 public interface PropertyScanner {
-	 PropertyCount getPropertiesCountFromFile(String file);
-
  
-	void searchForUsages(PropertyCount pCount, String... string);
+	Set<String> searchForUsages(PropertyCount pCount, String root);
 
- }
+}
