@@ -1,16 +1,21 @@
 package controller;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import exception.DataAccessException;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -21,6 +26,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import model.PropertyCount;
 import service.impl.AhoCorasickScanner;
 import service.interfaces.PropertyScanner;
@@ -31,13 +37,14 @@ public class InternationalizedPropertyFileController {
 	GridPane gridPane;
 	@FXML
 	TextField fileRoot;
+	@FXML
+	Button startScan;
+	
 	private boolean wasRowAdded;
-	private boolean wasRowRemoved;
-	private static int counter = 0;
 	private PropertyScanner propertyScanner;
+	
 	@FXML
 	protected void addResourceBundleFileField(ActionEvent event) {
-		counter++;
 		Button button = new Button("Choose File... ");
 		Button removeButton = new Button("Remove ");
 		button.setOnAction(this::chooseFile);
@@ -54,6 +61,7 @@ public class InternationalizedPropertyFileController {
 		Button button = (Button) event.getSource();
 		int rowNum = GridPane.getRowIndex(button);
 		TextField field = (TextField) getNodeByRowColumnIndex(rowNum, 1, gridPane);
+		
 		FileChooser chooser = new FileChooser();
 		chooser.setTitle("Open File");
 		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("PROPERTIES files (*.properties)",
@@ -64,8 +72,7 @@ public class InternationalizedPropertyFileController {
 		if (file != null) {
 			field.setText(file.getPath());
 		}
-		System.out.println("TEST " + button.getText() + " rowNum: " + rowNum);
-	}
+ 	}
 
 	public Node getNodeByRowColumnIndex(final int row, final int column, GridPane gridPane) {
 		Node result = null;
@@ -123,7 +130,6 @@ public class InternationalizedPropertyFileController {
 
 	public void initialize() {
 		wasRowAdded = false;
-		wasRowRemoved = false;
 		propertyScanner = new AhoCorasickScanner();
 		initializeRowConstraints();
 	}	
@@ -138,19 +144,47 @@ public class InternationalizedPropertyFileController {
 	
 	@FXML
 	public void startScan(ActionEvent event) {
-		if (!FormUtils.isNullOrEmpty(fileRoot.getText())) {
-			List<String> filePaths = getAllFilePathsFromFields();
-	 		PropertyCount propertyCount = PropertyCount.getPropertiesCountFromFile(filePaths.toArray(new String[0]));
-	 		Set<String>  included= propertyScanner.searchForUsages(propertyCount, fileRoot.getText());
-	 		System.out.println("SCAN");
-	 		for (String s: included) {
-		 		System.out.println(s);
-	 		}
-	 		System.out.println("DONE");
-
-		}  
+		startScan.setDisable(true);
+		List<String> filePaths = getAllFilePathsFromFields();
+		if (!FormUtils.isNullOrEmpty(fileRoot.getText()) && !filePaths.isEmpty()) {
+			scanPropertiesFromFilePaths(filePaths);
+		} else {
+        	FormUtils.errorMessage("A file field was blank!");
+		}
+		startScan.setDisable(false);
 	}
 	
+	
+	private void scanPropertiesFromFilePaths(List<String> filePaths) {
+		try {
+			PropertyCount propertyCount = PropertyCount.getPropertiesCountFromFile(filePaths.toArray(new String[0]));
+	 		Set<String>  included= propertyScanner.searchForUsages(propertyCount, fileRoot.getText());
+	 		Set<String> excluded =  propertyCount.getExcludedProperties(included);
+	 		loadScannedPropertiesForm(included, excluded, filePaths);
+ 		} catch (DataAccessException io) {
+ 			FormUtils.errorMessage(io.getMessage());
+ 		}	
+	}
+	
+	private void loadScannedPropertiesForm(Set<String> included, Set<String> excluded, List<String> filePaths) {
+		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/form/ScannedPropertiesForm.fxml"));     
+
+		Parent root;
+		try {
+			ScannedPropertiesFormController controller = new ScannedPropertiesFormController();
+			controller.setProperties(included, excluded);
+			controller.setInputFilePaths(filePaths);
+			fxmlLoader.setController(controller);
+			root = (Parent)fxmlLoader.load();
+			Stage stage = new Stage();
+            stage.setScene(new Scene(root));  
+            stage.show();
+		} catch (IOException e) {
+	        	e.printStackTrace();
+		}          
+		
+	}
+
 	@FXML
 	public void chooseFileRoot(ActionEvent event) {
 		DirectoryChooser chooser = new DirectoryChooser();
@@ -175,7 +209,6 @@ public class InternationalizedPropertyFileController {
  		        if (!FormUtils.isNullOrEmpty(field.getText())) {
  		        	filePaths.add(field.getText());
  		        } else {
- 		        	FormUtils.errorMessage("A file field was blank!");
  		        	filePaths.clear();
  		        	break;
  		        }

@@ -5,10 +5,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import exception.DataAccessException;
 
 public class PropertyCount {
 
@@ -48,6 +51,12 @@ public class PropertyCount {
 		}
 	}
 
+	public Set<String> getExcludedProperties(Set<String> included) {
+		Set<String> excluded = new HashSet<>(propertiesCount.keySet());
+		excluded.removeAll(included);
+		return excluded;
+	}
+	
 	@Override
 	public String toString() {
 		return "PropertyCount [propertiesCount=" + propertiesCount + "]";
@@ -72,8 +81,7 @@ public class PropertyCount {
 			PropertyCount propertyCount = new PropertyCount(propertyCountMap);
 			return propertyCount;
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new DataAccessException("There was an error processing the file!: " + path.toString());
 		}
-		return new PropertyCount();
 	}
 }

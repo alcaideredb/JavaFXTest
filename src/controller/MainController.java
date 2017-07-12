@@ -2,6 +2,7 @@ package controller;
 
 import java.io.IOException;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,8 +22,13 @@ public class MainController {
 			fillPane.getChildren().add(newLoadedPane);
 			
  		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}           
+	}
+	
+	@FXML
+	protected void closeApplication(ActionEvent event) {
+		Platform.exit();
+		System.exit(0);
 	}
 }
