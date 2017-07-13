@@ -1,3 +1,4 @@
+model\SafeFileReader.class
 service\impl\BoyerMoore.class
 model\SortedProperties$1.class
 util\FormUtils.class
@@ -5,6 +6,7 @@ model\PropertyCount.class
 model\SortedProperties.class
 service\impl\NaiveScanner.class
 service\interfaces\PropertyScanner.class
+model\PropertiesProcessor.class
 controller\ScannedPropertiesFormController.class
 controller\InternationalizedPropertyFileController.class
 controller\MainController.class
