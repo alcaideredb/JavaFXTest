@@ -13,8 +13,7 @@ After scanning the user may generate a new trimmed ".properties" files based on 
 
 
 # Warning
-As of the moment the tests haven't been fixed yet. When attempting to build it please run 
+As of the moment the tests haven't been fixed yet. When attempting to build it please run one of the following commands:
 * mvn package -DskipTests
 * mvn package -DskipTests=true 
-or
 * mvn package -Dmaven.test.skip=true 
