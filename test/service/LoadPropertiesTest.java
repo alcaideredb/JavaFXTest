@@ -12,6 +12,7 @@ import java.util.Properties;
 
 import org.junit.Test;
 
+import model.PropertyCount;
 import model.SortedProperties;
 
 public class LoadPropertiesTest {
@@ -58,6 +59,14 @@ public class LoadPropertiesTest {
 		System.out.println(resolvedPath);
 		return resolvedPath.toString();
 	}
-
+	
+	
+	@Test
+	public void testDiffCharsetFile() {
+		String filePath = "C:\\JDeveloper\\local\\hrpayrollapp\\HRPayrollService\\src\\NotificationUtil.properties";
+		PropertyCount propertyCount = PropertyCount.getPropertiesCountFromFile(filePath);
+		System.out.println("SAD");
+		System.out.println(propertyCount);
+	}
 
 }

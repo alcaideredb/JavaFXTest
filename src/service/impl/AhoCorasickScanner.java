@@ -37,13 +37,11 @@ public class AhoCorasickScanner implements PropertyScanner {
 		
 		Trie trie = Trie.builder().addKeywords(keyArray).build();
   		for (String fPath : filePaths) {
-//			System.out.println("IN FILE PATH: " + fPath + ": ");
-			String text = retrieveTextFromFile(fPath);
+ 			String text = retrieveTextFromFile(fPath);
 			Collection<Emit> emits = trie.parseText(text);
 			keysFound = emits.stream().map(key -> key.getKeyword()).collect(Collectors.toSet());
 			includedProperties.addAll(keysFound);
-//			System.out.println(keysFound);
-  		} 
+   		} 
 		return includedProperties;
 
 	}

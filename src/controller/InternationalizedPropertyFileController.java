@@ -125,8 +125,7 @@ public class InternationalizedPropertyFileController {
 		}
 		grid.getChildren().removeAll(deleteNodes);
 		grid.getRowConstraints().remove(row);
-		System.out.println("ROW NUM " + row + "ROW SIZE: " + grid.getRowConstraints().size());
-	}
+ 	}
 
 	public void initialize() {
 		wasRowAdded = false;

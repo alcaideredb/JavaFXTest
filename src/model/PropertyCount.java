@@ -74,14 +74,18 @@ public class PropertyCount {
  	public static PropertyCount getPropertiesCountFromFile(String file) {
 		Path path = Paths.get(file);
 		try {
-			List<String> lines = Files.lines(path).filter(s -> !s.startsWith("#") && !s.isEmpty())
-					.collect(Collectors.toList());
+			List<String> lines = SafeFileReader.lines(path).filter(s -> !s.startsWith("#") && !s.isEmpty()).collect(Collectors.toList());
 			Map<String, Long> propertyCountMap = lines.stream()
-					.collect(Collectors.groupingBy(s -> s.toString().split("=")[0], Collectors.counting()));
+					.collect(Collectors.groupingBy(s -> getKeyFromProperty(s), Collectors.counting()));
 			PropertyCount propertyCount = new PropertyCount(propertyCountMap);
 			return propertyCount;
 		} catch (IOException e) {
 			throw new DataAccessException("There was an error processing the file!: " + path.toString());
 		}
 	}
+ 	
+ 	private static String getKeyFromProperty(String propString) {
+ 		String[] keys = propString.split("="); 
+		return keys[0].trim();
+  	}
 }

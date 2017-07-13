@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
+
+import org.omg.Messaging.SyncScopeHelper;
 
 import exception.DataAccessException;
 import javafx.beans.property.Property;
@@ -24,11 +27,14 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
+import model.PropertiesProcessor;
+import model.SafeFileReader;
 import model.SortedProperties;
 import util.FormUtils;
 
@@ -49,7 +55,13 @@ public class ScannedPropertiesFormController {
 
 	@FXML
 	TextField outputDirectoryField;
+	
+	@FXML
+	TitledPane excludedTitle;
+	@FXML
+	TitledPane includedTitle;
 
+	
 	public Set<String> getIncludedProperties() {
 		if (includedProperties == null) {
 			includedProperties = new TreeSet<>();
@@ -65,9 +77,10 @@ public class ScannedPropertiesFormController {
 		return excludedProperties;
 	}
 
-	public void setProperties(Set<String> included, Set<String> excluded) {
+	public void setProperties(Set<String> included, Set<String> excluded) { 
 		this.includedProperties = new TreeSet<>(included);
 		this.excludedProperties = new TreeSet<>(excluded);
+
 	}
 
 	public void setInputFilePaths(Collection<String> filePaths) {
@@ -77,9 +90,10 @@ public class ScannedPropertiesFormController {
 	public void initialize() {
 		includedData = FXCollections.observableArrayList(getIncludedProperties());
 		excludedData = FXCollections.observableArrayList(getExcludedProperties());
-
 		includedListView.setItems(includedData);
 		excludedListView.setItems(excludedData);
+		includedTitle.setText("Included Properties: " + getIncludedProperties().size());
+		excludedTitle.setText("Excluded Properties: " + getExcludedProperties().size());
 	}
 
 	public void chooseOutputDirectory(ActionEvent ae) {
@@ -108,14 +122,14 @@ public class ScannedPropertiesFormController {
 	public void trimProperties() {
 		try {
 			for (String filePath : inputFilePaths) {
-				Properties prevProperties = getPropertiesFromFilePath(filePath);
-				Properties trimmedProp = trimProperties(prevProperties);
-				String outputFilePath = generateOutputFilePath(outputDirectoryField.getText(), filePath);
-				writePropertyTo(trimmedProp, outputFilePath);
+				Properties prevProperties = PropertiesProcessor.getPropertiesFromFilePath(filePath);
+ 				Properties trimmedProp = PropertiesProcessor.trimProperties(prevProperties, excludedProperties);
+ 				String outputFilePath = generateOutputFilePath(outputDirectoryField.getText(), filePath);
+				PropertiesProcessor.writePropertyTo(trimmedProp, outputFilePath);
 			}
 		} catch (IOException e) {
 			FormUtils.errorMessage("Problem in processing one of the files.");
-			throw new DataAccessException("Problem in processing one of the files.");
+			throw new DataAccessException("Problem in processing one of the files. " + e.getMessage());
 		}
 
 		Alert alert = new Alert(AlertType.INFORMATION, "File/s successfully trimmed! "
@@ -128,39 +142,8 @@ public class ScannedPropertiesFormController {
 		Path outputDirPath = Paths.get(outputDir);
 		Path outputFileName = Paths.get(filePath).getFileName();
 		Path resolvedPath = outputDirPath.resolve(outputFileName);
-		System.out.println(resolvedPath);
-		return resolvedPath.toString();
+ 		return resolvedPath.toString();
 	}
 
-	public Properties trimProperties(Properties propertiesToTrim) {
-		Properties trimmedProp = new Properties();
-		trimmedProp.putAll(propertiesToTrim);
-		System.out.println("props totrim " + propertiesToTrim);
-		System.out.println("trimmed " + trimmedProp);
-		for (String excludedKey : excludedProperties) {
-			String currProp = propertiesToTrim.getProperty(excludedKey);
-			if (currProp != null) {
-				System.out.println("curprop " + currProp);
-				trimmedProp.remove(excludedKey);
-			}
-		}
-		return trimmedProp;
-	}
-
-	public Properties getPropertiesFromFilePath(String filePath) throws IOException {
-		Path inputPath = Paths.get(filePath);
-		Properties prop = new Properties();
-		Reader reader = Files.newBufferedReader(inputPath);
-		prop.load(reader);
-		return prop;
-	}
-
-	public void writePropertyTo(Properties prop, String filePath) throws IOException {
-		Path outputPath = Paths.get(filePath);
-		Writer writer = Files.newBufferedWriter(outputPath);
-		Properties sp = new SortedProperties();
-		sp.putAll(prop);	
-		sp.store(writer, "Auto generated property list from property trimmer app.");
-	}
-
+	
 }

@@ -56,7 +56,7 @@
                                              <children>
                                                 <AnchorPane prefHeight="200.0" prefWidth="200.0">
                                                    <children>
-                                                      <TitledPane animated="false" collapsible="false" layoutX="36.0" layoutY="46.0" prefHeight="266.0" prefWidth="310.0" text="Included Properties" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                      <TitledPane fx:id="includedTitle" animated="false" collapsible="false" layoutX="36.0" layoutY="46.0" prefHeight="266.0" prefWidth="310.0" text="Included Properties" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                         <content>
                                                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                                <children>
@@ -69,7 +69,7 @@
                                                 </AnchorPane>
                                                 <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
                                                    <children>
-                                                      <TitledPane animated="false" collapsible="false" prefHeight="266.0" prefWidth="310.0" text="Excluded Properties" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                      <TitledPane fx:id="excludedTitle" animated="false" collapsible="false" prefHeight="266.0" prefWidth="310.0" text="Excluded Properties" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                          <content>
                                                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                                                <children>
