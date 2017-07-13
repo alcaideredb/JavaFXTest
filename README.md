@@ -12,6 +12,9 @@ After scanning the user may generate a new trimmed ".properties" files based on 
    - Maven
 
 
+### Running the app:
+*  Just execute "java -jar RBScanner-0.0.1-SNAPSHOT-jar-with-dependencies.jar" in the command line
+  The file jar file should be created at the "RBScanner\target\"" folder. 
 # Warning
 As of the moment the tests haven't been fixed yet. When attempting to build it please run one of the following commands:
 * mvn package -DskipTests

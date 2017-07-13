@@ -18,12 +18,7 @@
             <MenuItem mnemonicParsing="false" text="Quit" onAction="#closeApplication" />
           </items>
         </Menu>
-        <Menu mnemonicParsing="false" text="Edit Configuration">
-          <items>
-            <MenuItem mnemonicParsing="false" text="Undo" />
-            <MenuItem mnemonicParsing="false" text="Redo" />
-          </items>
-        </Menu>
+        
          
       </menus>
     </MenuBar>

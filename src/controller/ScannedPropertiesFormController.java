@@ -118,8 +118,8 @@ public class ScannedPropertiesFormController {
 			throw new DataAccessException("Problem in processing one of the files.");
 		}
 
-		Alert alert = new Alert(AlertType.INFORMATION, "File successfully trimmed! "
-				+ "The files have been generated in the following directory: " + outputDirectoryField.getText());
+		Alert alert = new Alert(AlertType.INFORMATION, "File/s successfully trimmed! "
+				+ "The file/s have been generated in the following directory: " + outputDirectoryField.getText());
 		alert.showAndWait();
 		
 	}
