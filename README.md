@@ -10,3 +10,11 @@ After scanning the user may generate a new trimmed ".properties" files based on 
 * #### To build from source:
    - Java 8 JDK
    - Maven
+
+
+# Warning
+As of the moment the tests haven't been fixed yet. When attempting to build it please run 
+* mvn package -DskipTests
+* mvn package -DskipTests=true 
+or
+* mvn package -Dmaven.test.skip=true 
