@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import model.PropertyCount;
+import model.PropertiesKeys;
 
 public interface PropertyScanner {
  
-	Set<String> searchForUsages(PropertyCount pCount, String root);
+	Set<String> searchForUsages(PropertiesKeys pCount, String root);
 
 }

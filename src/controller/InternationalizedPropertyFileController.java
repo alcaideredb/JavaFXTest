@@ -31,7 +31,7 @@ import javafx.scene.layout.RowConstraints;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import model.PropertyCount;
+import model.PropertiesKeys;
 import service.impl.AhoCorasickScanner;
 import service.interfaces.PropertyScanner;
 import util.FormUtils;
@@ -159,7 +159,8 @@ public class InternationalizedPropertyFileController {
 
 	private void scanPropertiesFromFilePaths(List<String> filePaths) {
 		try {
-			PropertyCount propertyCount = PropertyCount.getPropertiesCountFromFile(filePaths.toArray(new String[0]));
+
+			PropertiesKeys propertyCount = PropertiesKeys.retrieveFromFile(filePaths.toArray(new String[0]));
 			Set<String> included = propertyScanner.searchForUsages(propertyCount, fileRoot.getText());
 			Set<String> excluded = propertyCount.getExcludedProperties(included);
 			loadScannedPropertiesForm(included, excluded, filePaths);

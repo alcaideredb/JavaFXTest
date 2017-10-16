@@ -20,21 +20,21 @@ import java.util.stream.Stream;
 import org.ahocorasick.trie.Emit;
 import org.ahocorasick.trie.Trie;
 
-import model.PropertyCount;
+import model.PropertiesKeys;
 import service.interfaces.*;
 
 public class BoyerMooreScanner implements PropertyScanner {
 	 
  
 	@Override
- 	public Set<String> searchForUsages (PropertyCount pCount, String root) {
+ 	public Set<String> searchForUsages (PropertiesKeys pCount, String root) {
 		Set<String> keysFound = null;
 		Set<String> includedProperties = new HashSet<>();
 
 		List<String> filePaths = retrieveFilePaths(root);
  	 
 		for (String fPath : filePaths) {
-			keysFound = pCount.getKeySet().parallelStream().filter(key -> fileContainsText(key, fPath))
+			keysFound = pCount.getPropertiesKeys().parallelStream().filter(key -> fileContainsText(key, fPath))
 					.collect(Collectors.toSet());
 			includedProperties.addAll(keysFound);
 		}
