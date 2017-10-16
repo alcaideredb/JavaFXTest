@@ -1,7 +1,5 @@
 package service;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
@@ -12,7 +10,6 @@ import java.util.Properties;
 
 import org.junit.Test;
 
-import model.PropertyCount;
 import model.SortedProperties;
 
 public class LoadPropertiesTest {
@@ -23,24 +20,23 @@ public class LoadPropertiesTest {
 		Reader reader = Files.newBufferedReader(inputPath);
 		prop.load(reader);
 		return prop;
-	} 
-	
+	}
+
 	@Test
 	public void test() throws IOException {
 		String filePath = "C:\\JDeveloper\\local\\siapp\\common-target.properties";
 		String outputFilePath = "C:\\JDeveloper\\testMe.properties";
 		Properties prop = getPropertyFromFilePath(filePath);
- 		writePropertyTo(prop, outputFilePath);
+		writePropertyTo(prop, outputFilePath);
 	}
 
-	
 	@Test
 	public void testFileConcat() {
 		String outputFilePath = "C:\\Desktop\\t";
 		String inputFilePath = "C:\\JDeveloper\\testMe.properties";
 		generateOutputFilePath(outputFilePath, inputFilePath);
- 	}
-	
+	}
+
 	public void writePropertyTo(Properties prop, String filePath) throws IOException {
 		Properties p = new Properties();
 		p.putAll(prop);
@@ -48,10 +44,10 @@ public class LoadPropertiesTest {
 		Writer writer = Files.newBufferedWriter(outputPath);
 		Properties sp = new SortedProperties();
 		sp.putAll(p);
-		
+
 		sp.store(writer, "Auto generated property list from property trimmer app.");
 	}
-	
+
 	private String generateOutputFilePath(String outputDir, String filePath) {
 		Path outputDirPath = Paths.get(outputDir);
 		Path outputFileName = Paths.get(filePath).getFileName();
@@ -59,14 +55,14 @@ public class LoadPropertiesTest {
 		System.out.println(resolvedPath);
 		return resolvedPath.toString();
 	}
-	
-	
+
 	@Test
 	public void testDiffCharsetFile() {
 		String filePath = "C:\\JDeveloper\\local\\hrpayrollapp\\HRPayrollService\\src\\NotificationUtil.properties";
-		PropertyCount propertyCount = PropertyCount.getPropertiesCountFromFile(filePath);
+		// PropertyCount propertyCount =
+		// PropertyCount.getPropertiesCountFromFile(filePath);
 		System.out.println("SAD");
-		System.out.println(propertyCount);
+		// System.out.println(propertyCount);
 	}
 
 }

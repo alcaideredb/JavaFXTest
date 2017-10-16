@@ -6,7 +6,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -28,11 +27,7 @@ public class AhoCorasickScanner implements PropertyScanner {
 
 		List<String> filePaths = retrieveFilePaths(root);
 		String[] keyArray = pCount.getPropertiesKeys().toArray(new String[0]);
-		for (String s : keyArray) {
-			System.out.println(s);
-		}
 
-		
 		Trie trie = Trie.builder().addKeywords(keyArray).build();
 		for (String fPath : filePaths) {
 			String text = retrieveTextFromFile(fPath);
