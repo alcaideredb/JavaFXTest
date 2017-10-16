@@ -2,40 +2,28 @@ package controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
-import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
-
-import org.omg.Messaging.SyncScopeHelper;
 
 import exception.DataAccessException;
-import javafx.beans.property.Property;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TitledPane;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
 import model.PropertiesProcessor;
-import model.SafeFileReader;
-import model.SortedProperties;
 import util.FormUtils;
 
 public class ScannedPropertiesFormController {
@@ -55,13 +43,12 @@ public class ScannedPropertiesFormController {
 
 	@FXML
 	TextField outputDirectoryField;
-	
+
 	@FXML
 	TitledPane excludedTitle;
 	@FXML
 	TitledPane includedTitle;
 
-	
 	public Set<String> getIncludedProperties() {
 		if (includedProperties == null) {
 			includedProperties = new TreeSet<>();
@@ -77,7 +64,7 @@ public class ScannedPropertiesFormController {
 		return excludedProperties;
 	}
 
-	public void setProperties(Set<String> included, Set<String> excluded) { 
+	public void setProperties(Set<String> included, Set<String> excluded) {
 		this.includedProperties = new TreeSet<>(included);
 		this.excludedProperties = new TreeSet<>(excluded);
 
@@ -87,11 +74,14 @@ public class ScannedPropertiesFormController {
 		this.inputFilePaths = new TreeSet<>(filePaths);
 	}
 
+	@FXML
 	public void initialize() {
 		includedData = FXCollections.observableArrayList(getIncludedProperties());
 		excludedData = FXCollections.observableArrayList(getExcludedProperties());
 		includedListView.setItems(includedData);
 		excludedListView.setItems(excludedData);
+		includedListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+		excludedListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		includedTitle.setText("Included Properties: " + getIncludedProperties().size());
 		excludedTitle.setText("Excluded Properties: " + getExcludedProperties().size());
 	}
@@ -106,25 +96,26 @@ public class ScannedPropertiesFormController {
 			return;
 		}
 	}
+
 	@FXML
 	public void generateTrimmedOutputFiles(ActionEvent ae) {
 		if (!FormUtils.isNullOrEmpty(outputDirectoryField.getText())) {
 			Alert confirmationDialog = new Alert(AlertType.CONFIRMATION, "Go ahead and generate trimmed files?",
 					ButtonType.YES, ButtonType.CANCEL);
 			confirmationDialog.showAndWait().filter(type -> ButtonType.YES == type).ifPresent(s -> trimProperties());
-		
+
 		} else {
 			FormUtils.errorMessage("Output file was not specified!");
 		}
 
 	}
-	
+
 	public void trimProperties() {
 		try {
 			for (String filePath : inputFilePaths) {
 				Properties prevProperties = PropertiesProcessor.getPropertiesFromFilePath(filePath);
- 				Properties trimmedProp = PropertiesProcessor.trimProperties(prevProperties, excludedProperties);
- 				String outputFilePath = generateOutputFilePath(outputDirectoryField.getText(), filePath);
+				Properties trimmedProp = PropertiesProcessor.trimProperties(prevProperties, excludedProperties);
+				String outputFilePath = generateOutputFilePath(outputDirectoryField.getText(), filePath);
 				PropertiesProcessor.writePropertyTo(trimmedProp, outputFilePath);
 			}
 		} catch (IOException e) {
@@ -135,15 +126,14 @@ public class ScannedPropertiesFormController {
 		Alert alert = new Alert(AlertType.INFORMATION, "File/s successfully trimmed! "
 				+ "The file/s have been generated in the following directory: " + outputDirectoryField.getText());
 		alert.showAndWait();
-		
+
 	}
 
 	private String generateOutputFilePath(String outputDir, String filePath) {
 		Path outputDirPath = Paths.get(outputDir);
 		Path outputFileName = Paths.get(filePath).getFileName();
 		Path resolvedPath = outputDirPath.resolve(outputFileName);
- 		return resolvedPath.toString();
+		return resolvedPath.toString();
 	}
 
-	
 }
