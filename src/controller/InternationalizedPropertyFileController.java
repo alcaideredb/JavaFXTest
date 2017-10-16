@@ -33,6 +33,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import model.PropertiesKeys;
 import service.impl.AhoCorasickScanner;
+import service.impl.FilePostInclusionFilterProcessor;
 import service.interfaces.PropertyScanner;
 import util.FormUtils;
 
@@ -43,6 +44,11 @@ public class InternationalizedPropertyFileController {
 	TextField fileRoot;
 	@FXML
 	Button startScan;
+
+	@FXML
+	Button addFileInclusionFilter;
+	@FXML
+	TextField fileInclusionFilterCSV;
 
 	private boolean wasRowAdded;
 	private PropertyScanner propertyScanner;
@@ -58,6 +64,21 @@ public class InternationalizedPropertyFileController {
 		TextField field = new TextField();
 
 		addRow(button, field, removeButton);
+	}
+
+	@FXML
+	protected void addFileInclusionFilterAction(ActionEvent event) {
+		Button button = (Button) event.getSource();
+		TextField field = fileInclusionFilterCSV;
+
+		FileChooser chooser = new FileChooser();
+		chooser.setTitle("Open File");
+
+		File file = chooser.showOpenDialog(gridPane.getScene().getWindow());
+		if (file != null) {
+			field.setText(file.getPath());
+		}
+
 	}
 
 	@FXML
@@ -163,6 +184,13 @@ public class InternationalizedPropertyFileController {
 			PropertiesKeys propertyCount = PropertiesKeys.retrieveFromFile(filePaths.toArray(new String[0]));
 			Set<String> included = propertyScanner.searchForUsages(propertyCount, fileRoot.getText());
 			Set<String> excluded = propertyCount.getExcludedProperties(included);
+
+			if (fileInclusionFilterCSV.getText() != null && !fileInclusionFilterCSV.getText().isEmpty()) {
+				String inclusionFilterFilePath = fileInclusionFilterCSV.getText();
+				FilePostInclusionFilterProcessor processor = new FilePostInclusionFilterProcessor(
+						inclusionFilterFilePath);
+				processor.filter(included, excluded);
+			}
 			loadScannedPropertiesForm(included, excluded, filePaths);
 		} catch (DataAccessException io) {
 			FormUtils.errorMessage(io.getMessage());
